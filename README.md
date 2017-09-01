@@ -1,4 +1,4 @@
-# Web Crawler exapmple
+# Web Crawler example
 ### prerequisites
 - Must have [Node.js](https://nodejs.org/) installed.
 ### Once node is installed you may run the program.
