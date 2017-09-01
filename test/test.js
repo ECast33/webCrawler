@@ -2,7 +2,7 @@ var assert = require('assert');
 var Crawler = require('crawler');
 var fs = require('fs-extra');
 
-describe('Unit Tests', function () {
+describe('Web Crawler', function () {
   describe('Url scraping Directory and file write', function () {
 
     it('Should Write a Directory', function (done) {
@@ -25,8 +25,6 @@ describe('Unit Tests', function () {
             console.log(error);
           } else {
             var $ = res.$;
-            // $ is Cheerio by default
-            //a lean implementation of core jQuery designed specifically for the server
             var title = $("title").text();
             assert.equal('Google', title);
           }
@@ -38,7 +36,7 @@ describe('Unit Tests', function () {
       done();
     });
 
-    it('Write a File and assert the file exsists', function (done) {
+    it('Write a file and check it exists', function (done) {
       fs.writeFile('./test/output/test.txt', 'test Page', function (err) {
         if (err) {
           console.log(err);
@@ -50,7 +48,7 @@ describe('Unit Tests', function () {
       done();
     });
 
-    it('Write a file Read it and assert the content', function (done) {
+    it('Write a file, Read it, and assert the content is correct', function (done) {
       fs.writeFile('./test/output/testRead.txt', 'test Page', function (err) {
         if (err) {
           console.log(err);
@@ -66,7 +64,7 @@ describe('Unit Tests', function () {
         content = data;
         assert.equal('test Page', content);
       });
-      
+
       done();
     });
 
@@ -77,7 +75,6 @@ describe('Unit Tests', function () {
       assert.equal('sonobi.com', newUrl);
       done();
     });
-
 
   });
 });

@@ -12,7 +12,9 @@
     "async": "^2.5.0",
     "crawler": "^1.0.5",
     "fs-extra": "^4.0.1",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
     "mocha": "^3.5.0"
   }
 }

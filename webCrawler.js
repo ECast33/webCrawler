@@ -1,16 +1,20 @@
-var argv = require('minimist')(process.argv.slice(2));
-var Crawler = require('crawler');
-var fs = require('fs-extra');
-var async = require('async');
-var directory = argv.d;
-var urls = argv._;
-var nextUrls = [];
+var argv       = require('minimist')(process.argv.slice(2));
+var Crawler    = require('crawler');
+var fs         = require('fs-extra');
+var async      = require('async');
+var directory  = argv.d;
+var urls       = argv._;
+var nextUrls   = [];
 var foundSites = [];
 
-//check for initial  url
+// the number of links on a given page to process
+var LINKS_TO_PROCESS = 10;
+
+//check for initial url
 if (urls.length == 0) {
     console.log("At least one URL is Requred!");
 }
+
 //check if dir exsists
 if (fs.existsSync('./' + directory)) {
     console.log('directory already created');
@@ -45,6 +49,7 @@ var cLink = new Crawler({
         done();
     }
 });
+
 //crawler for HTML
 var cHtml = new Crawler({
     maxConnections: 10,
@@ -61,13 +66,12 @@ var cHtml = new Crawler({
     }
 });
 
-queueOrigionals(urls);
- function queueOrigionals(arr) {
+function queueOriginals(arr) {
     for (var i = 0; i < arr.length; i++) {
         //escape
         var newUrl = arr[i].slice(arr[i].indexOf('//') + 2);
         newUrl = newUrl.replace(newUrl.substring(newUrl.length - 1), '');
-        fileName =  "./" + directory + "/" + newUrl + ".html";
+        fileName = "./" + directory + "/" + newUrl + ".html";
         cLink.queue({
             uri: arr[i],
             fileName: fileName
@@ -77,7 +81,7 @@ queueOrigionals(urls);
 
 function queueHtml(arr) {
     if (arr.length == 0) {
-        console.log('No HTML Found');
+        console.log('No more HTML found for this URL');
     } else {
         async.eachLimit(arr, 1, function (site, done) {
             console.log(site);
@@ -92,4 +96,5 @@ function queueHtml(arr) {
     }
 };
 
-
+// Run
+queueOriginals(urls);
