@@ -12,7 +12,7 @@ describe('Web Crawler', function () {
       } else {
         fs.mkdir(directory);
       }
-      assert.equal(true, fs.existsSync('./' + directory));
+      setTimeout(function(){ assert.equal(true, fs.existsSync('./' + directory)); }, 500);
       done();
     });
 
@@ -44,7 +44,7 @@ describe('Web Crawler', function () {
           console.log('File was written');
         }
       });
-      assert.equal(true, fs.existsSync('./test/output/test.txt'));
+      setTimeout(function(){ assert.equal(true, fs.existsSync('./test/output/test.txt'));}, 500);
       done();
     });
 

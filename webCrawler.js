@@ -1,10 +1,10 @@
-var argv       = require('minimist')(process.argv.slice(2));
-var Crawler    = require('crawler');
-var fs         = require('fs-extra');
-var async      = require('async');
-var directory  = argv.d;
-var urls       = argv._;
-var nextUrls   = [];
+var argv = require('minimist')(process.argv.slice(2));
+var Crawler = require('crawler');
+var fs = require('fs-extra');
+var async = require('async');
+var directory = argv.d;
+var urls = argv._;
+var nextUrls = [];
 var foundSites = [];
 
 // the number of links on a given page to process
@@ -41,11 +41,14 @@ var cLink = new Crawler({
         });
         //filter html files?
         nextUrls.filter(function (element) {
-            if (element.indexOf('.html') >= 0 && element.indexOf('http') != 0) {
+            if (element.indexOf('http') >= 0 && element.indexOf('.com') >= 0) {
                 foundSites.push(element);
             };
         });
-        queueHtml(foundSites);
+        console.log('next Links ', foundSites);
+        for (var i = 0; i < 10; i++) {
+            queueHtml(foundSites);
+        }
         done();
     }
 });
@@ -53,6 +56,7 @@ var cLink = new Crawler({
 //crawler for HTML
 var cHtml = new Crawler({
     maxConnections: 10,
+    jQuery: false,
     callback: function (error, res, done) {
         if (res) {
             var page = res.body;
@@ -65,18 +69,27 @@ var cHtml = new Crawler({
         done();
     }
 });
-
-function queueOriginals(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        //escape
-        var newUrl = arr[i].slice(arr[i].indexOf('//') + 2);
-        newUrl = newUrl.replace(newUrl.substring(newUrl.length - 1), '');
-        fileName = "./" + directory + "/" + newUrl + ".html";
-        cLink.queue({
-            uri: arr[i],
-            fileName: fileName
-        });
-    }
+// Run
+queueOriginals(urls);
+function queueOriginals(url) {
+    //escape
+    var newUrl = url[0].slice(url[0].indexOf('//') + 2);
+    newUrl = newUrl.replace(newUrl.substring(newUrl.length - 1), '');
+    fileName = "./" + directory + "/" + newUrl + ".html";
+    cLink.queue({
+        uri: url[0],
+        fileName: fileName
+    });
+    // for (var i = 0; i < arr.length; i++) {
+    //     //escape
+    //     var newUrl = arr[i].slice(arr[i].indexOf('//') + 2);
+    //     newUrl = newUrl.replace(newUrl.substring(newUrl.length - 1), '');
+    //     fileName = "./" + directory + "/" + newUrl + ".html";
+    //     cLink.queue({
+    //         uri: arr[i],
+    //         fileName: fileName
+    //     });
+    // }
 };
 
 function queueHtml(arr) {
@@ -84,10 +97,11 @@ function queueHtml(arr) {
         console.log('No more HTML found for this URL');
     } else {
         async.eachLimit(arr, 1, function (site, done) {
-            console.log(site);
+            var newUrl = site.slice(site.indexOf('//') + 2);
+            newUrl = newUrl.split('/').join('');
             cHtml.queue({
-                html: site,
-                fileName: "./" + directory + "/" + site
+                uri: site,
+                fileName: "./" + directory + "/" + newUrl + '.html'
             });
             done();
         }, function (err) {
@@ -95,6 +109,3 @@ function queueHtml(arr) {
         });
     }
 };
-
-// Run
-queueOriginals(urls);
