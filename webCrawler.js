@@ -46,7 +46,7 @@ var cLink = new Crawler({
             };
         });
         console.log('next Links ', foundSites);
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < LINKS_TO_PROCESS; i++) {
             queueHtml(foundSites);
         }
         done();
